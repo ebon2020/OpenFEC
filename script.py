@@ -34,8 +34,11 @@ def fetch_contributions(contributors, min_amount=None, max_amount=None, transact
             if response.status_code == 200:
                 data = response.json()
                 for contribution in data['results']:
-                    # Standardizing ZIP Code to 5 digits
-                    zip_code = contribution.get('contributor_zip', '')[:5]
+                    # Standardizing ZIP Code to 5 digits, if the field is not empty
+                    if contribution.get('contributor_zip'):
+                        zip_code = contribution.get('contributor_zip', '')[:5]
+                    else:
+                        zip_code = ''
 
                     all_contributions.append({
                         'Name': contribution['contributor_name'],
