@@ -1,11 +1,7 @@
 import requests
 import pandas as pd
 
-import requests
-import pandas as pd
-
-def fetch_contributions(contributors, min_amount=None, max_amount=None, transaction_period=2024, apply_grouping=False):
-    api_key = 'zaguWLntxb5tWY3ekBg5iB9eoxn7nTKTUDfXKrRa'
+def fetch_contributions(api_key, contributors, min_amount=None, max_amount=None, transaction_period=2024, apply_grouping=False):
     base_url = 'https://api.open.fec.gov/v1/'
     endpoint = 'schedules/schedule_a/'
     url = f'{base_url}{endpoint}'
@@ -34,8 +30,9 @@ def fetch_contributions(contributors, min_amount=None, max_amount=None, transact
             if response.status_code == 200:
                 data = response.json()
                 for contribution in data['results']:
-                    # Standardizing ZIP Code to 5 digits, if the field is not empty
-                    if contribution.get('contributor_zip'):
+                    # Standardizing ZIP Code to 5 digits
+                    # ensure that the ZIP Code is not empty
+                    if contribution.get('contributor_zip', ''):
                         zip_code = contribution.get('contributor_zip', '')[:5]
                     else:
                         zip_code = ''
@@ -49,7 +46,6 @@ def fetch_contributions(contributors, min_amount=None, max_amount=None, transact
                         'Recipient': contribution['committee']['name']
                     })
 
-                # Check if there are more pages
                 if data['pagination']['pages'] > page:
                     page += 1
                 else:
@@ -76,6 +72,7 @@ def fetch_contributions(contributors, min_amount=None, max_amount=None, transact
 
     return contributions_df
 
-
 # contributors = [("Robert BARTHOLOMEW", "CA")]
-# print(fetch_contributions(contributors, apply_grouping=True))
+# print(fetch_contributions('zaguWLntxb5tWY3ekBg5iB9eoxn7nTKTUDfXKrRa', contributors, apply_grouping=True))
+
+# zaguWLntxb5tWY3ekBg5iB9eoxn7nTKTUDfXKrRa
